@@ -9,6 +9,7 @@ variable "cidrs" {
 
 variable "localip" {}
 variable "domain_name" {}
+variable "tld" {}
 variable "db_instance_class" {}
 variable "dbname" {}
 variable "dbuser" {}

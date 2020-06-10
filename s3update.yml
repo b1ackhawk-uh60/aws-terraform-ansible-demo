@@ -9,9 +9,10 @@
                    dest: /var/www/html/wp-config.php
                    insertbefore: "/* That's all,"
                    block: |
-                     define('WP_SITEURL','http://dev.{{ domain }}.com');
-                     define('WP_HOME','http://dev.{{ domain }}.com');
+                     define('WP_SITEURL','http://dev.{{ domain }}{{ tld }}');
+                     define('WP_HOME','http://dev.{{ domain }}{{ tld }}');
                    state: absent
+         - pause:
          - name: Update S3 code bucket
            command: aws s3 sync /var/www/html s3://{{ s3code }}/ --delete
          - name: insert urls for dev in wp-config.php
@@ -19,12 +20,6 @@
                    dest: /var/www/html/wp-config.php
                    insertbefore: "/* That's all,"
                    block: |
-                     define('WP_SITEURL','http://dev.{{ domain }}.com');
-                     define('WP_HOME','http://dev.{{ domain }}.com');
+                     define('WP_SITEURL','http://dev.{{ domain }}{{ tld }}');
+                     define('WP_HOME','http://dev.{{ domain }}{{ tld }}');
                    
-           #         - shell: echo "define('WP_SITEURL','http://dev."{{ domain }}".com');" >> wp-config.php
-           #           args:
-           #                   chdir: /var/www/html
-           #         - shell: echo "define('WP_HOME','http://dev."{{ domain }}".com');" >> wp-config.php
-           #           args:
-           #                   chdir: /var/www/html

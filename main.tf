@@ -397,12 +397,13 @@ ${aws_instance.wp_dev.public_ip}
 [dev:vars]
 s3code=${aws_s3_bucket.code.bucket}
 domain=${var.domain_name}
+tld=${var.tld}
 EOF
 EOD
   }
 
   provisioner "local-exec" {
-    command = "aws ec2 wait instance-status-ok --instance-ids ${aws_instance.wp_dev.id} --profile superhero && ansible-playbook -i aws_hosts wordpress.yml"
+    command = "aws ec2 wait instance-status-ok --instance-ids ${aws_instance.wp_dev.id} --profile ${var.aws_profile} && ansible-playbook -i aws_hosts wordpress.yml"
   }
 }
 
@@ -456,16 +457,6 @@ resource "aws_ami_from_instance" "wp_golden" {
   name               = "wp_ami-${random_id.golden_ami.b64}"
   source_instance_id = aws_instance.wp_dev.id
 
-  provisioner "local-exec" {
-    command = <<EOT
-cat <<EOF > userdata
-#!/bin/bash
-/usr/bin/aws s3 sync s3://${aws_s3_bucket.code.bucket} /var/www/html/
-/bin/touch /var/spool/cron/root
-sudo /bin/echo '*/5 * * * * aws s3 sync s3://${aws_s3_bucket.code.bucket} /var/www/html' >> /var/spool/cron/root
-EOF
-EOT
-  }
 }
 
 # ----- launch configuration -----
@@ -477,7 +468,6 @@ resource "aws_launch_configuration" "wp_lc" {
   security_groups      = ["${aws_security_group.wp_private_sg.id}"]
   iam_instance_profile = aws_iam_instance_profile.s3_access_profile.id
   key_name             = aws_key_pair.wp_auth.id
-#  user_data            = file("userdata")
   user_data = <<EOF
 #!/bin/bash
 /usr/bin/aws s3 sync s3://${aws_s3_bucket.code.bucket} /var/www/html/
@@ -523,7 +513,7 @@ resource "aws_autoscaling_group" "wp_asg" {
 # ----- Route 53 ----
 
 resource "aws_route53_zone" "primary" {
-  name              = "${var.domain_name}.com"
+  name              = "${var.domain_name}${var.tld}"
   delegation_set_id = var.delegation_set
 }
 
@@ -531,7 +521,7 @@ resource "aws_route53_zone" "primary" {
 
 resource "aws_route53_record" "www" {
   zone_id = aws_route53_zone.primary.zone_id
-  name    = "www.${var.domain_name}.com"
+  name    = "www.${var.domain_name}${var.tld}"
   type    = "A"
 
   alias {
@@ -545,7 +535,7 @@ resource "aws_route53_record" "www" {
 
 resource "aws_route53_record" "dev" {
   zone_id = aws_route53_zone.primary.zone_id
-  name    = "dev.${var.domain_name}.com"
+  name    = "dev.${var.domain_name}${var.tld}"
   type    = "A"
   ttl     = "300"
   records = ["${aws_instance.wp_dev.public_ip}"]
@@ -554,7 +544,7 @@ resource "aws_route53_record" "dev" {
 #Private Zone
 
 resource "aws_route53_zone" "secondary" {
-  name = "${var.domain_name}.com"
+  name = "${var.domain_name}${var.tld}"
 
   vpc {
     vpc_id = aws_vpc.wp_vpc.id
@@ -565,7 +555,7 @@ resource "aws_route53_zone" "secondary" {
 
 resource "aws_route53_record" "db" {
   zone_id = aws_route53_zone.secondary.zone_id
-  name    = "db.${var.domain_name}.com"
+  name    = "db.${var.domain_name}${var.tld}"
   type    = "CNAME"
   ttl     = "300"
   records = ["${aws_db_instance.wp_db.address}"]
