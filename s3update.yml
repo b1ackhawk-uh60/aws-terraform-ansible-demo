@@ -12,7 +12,6 @@
                      define('WP_SITEURL','http://dev.{{ domain }}{{ tld }}');
                      define('WP_HOME','http://dev.{{ domain }}{{ tld }}');
                    state: absent
-         - pause:
          - name: Update S3 code bucket
            command: aws s3 sync /var/www/html s3://{{ s3code }}/ --delete
          - name: insert urls for dev in wp-config.php
