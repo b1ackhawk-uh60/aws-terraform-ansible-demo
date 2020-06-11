@@ -30,6 +30,7 @@ There are a few primary things required to run this (note: there are many distri
 3. All of the above need to be callable from any directory, which may mean setting up your PATH
 4. SSH key (public and private) for use in this demo
 5. A registered domain that you can set the name servers. This is required for this demo as designed, there would be code changes required to get around this.
+6. If you are not using the default ssh key, you may want to use ssh-agent: http://sshkeychain.sourceforge.net/mirrors/SSH-with-Keys-HOWTO/SSH-with-Keys-HOWTO-6.html
 
 For dymanic DNS creation in Route53 use the reusable delegation set from AWS:
 https://docs.aws.amazon.com/cli/latest/reference/route53/create-reusable-delegation-set.html
