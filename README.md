@@ -13,7 +13,7 @@ With only a few basic pre-requisites, the terraform configuration will:\
 -Create prod EC2 instances\
 -Create mysql RDS instance\
 -Create an Elastic Load Balancer for prod\
--Create an autoscaling target group for the ELB\
+-Create an autoscaling target group for the ELB
 
 
 There are a few primary things required to run this (note: there are many distributions of Linux which can affect the exact steps needed to setup your machine):
@@ -53,10 +53,10 @@ You must now go to Settings and for wordpress address(URL) and site address(URL)
 (Note: If a message pops up notifying you that you do not have a wp-config.php file, its probably because you have been redirected to http://www.<yourdomain.tld>. Don't worry about this, you will not be able to access dev temporarily, proceed to the next step.)\
 Before proceeding with any other changes, you must run the s3update.yml playbook in ansible to update the code for prod with this command: ansible-playbook -i aws_hosts s3update.yml\
 You can now go back two dev.<yourdomain.tld>/wp-admin to log into the dev admin panel.
-After 5 minutes or less, your prod instance will update automatically (check www.<yourdomain.tld> for the working webpage, do not use the admin panel in WP on prod.\
+After 5 minutes or less, your prod instance will update automatically (check www.<yourdomain.tld> for the working webpage, do not use the admin panel in WP on prod.
 
 All changes should be made in dev and then use the s3update.yml ansible playbook to push changes to prod.\
-That's it!\
+That's it!
 
 To completly tear it all down use: terraform destroy
 
