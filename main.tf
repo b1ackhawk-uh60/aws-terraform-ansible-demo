@@ -468,7 +468,7 @@ resource "aws_launch_configuration" "wp_lc" {
   security_groups      = ["${aws_security_group.wp_private_sg.id}"]
   iam_instance_profile = aws_iam_instance_profile.s3_access_profile.id
   key_name             = aws_key_pair.wp_auth.id
-  user_data = <<EOF
+  user_data            = <<EOF
 #!/bin/bash
 /usr/bin/aws s3 sync s3://${aws_s3_bucket.code.bucket} /var/www/html/
 /bin/touch /var/spool/cron/root
@@ -559,4 +559,10 @@ resource "aws_route53_record" "db" {
   type    = "CNAME"
   ttl     = "300"
   records = ["${aws_db_instance.wp_db.address}"]
+}
+
+#Output RDS database endpoint
+
+output "RDS-Endpoint-URL" {
+  value = aws_db_instance.wp_db.address
 }
