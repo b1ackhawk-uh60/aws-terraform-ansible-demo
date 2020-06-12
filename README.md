@@ -46,7 +46,7 @@ Run "terraform plan" to run a check and handle any errors that arise\
 Finally run "terraform apply" and wait for the prompt and type "yes" to let terraform set everything up (~10-15 mins)\
 Once the terraform job is complete, you can go to your dev webserver: dev.<yourdomain.tld>/wp-admin/setup-config.php (Do not touch prod/www yet)\
 You will have to run through the Wordpress setup, use the db config from terrafor.tfvars file.\
-For the Database Host, you will need to look in Amazon RDS for the newly created db and copy the Endpoint name, paste that into the WP setup.\
+For the Database Host, look at the output at the end of the terraform config (something like: terraform-xxxx.xxx.us-east-1.rds.amazonaws.com), copy and paste that into the WP setup.\
 Setup a WP admin user and pass of your choice.\
 
 -Important-\
